@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>App Vecinal: Reporta Microbasurales | Valparaíso</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="phone-mock">
+    <div class="notch"></div>
+    <div class="app-header">
+        <h1></h1>
+        <span>Valparaíso</span>
+    </div>
+
+    <div class="screen-container" id="screenContainer">
+        <!-- Pantalla REGISTRO -->
+        <div id="screenRegistro" class="screen active-screen">
+            <div class="card">
+                <h3 style="margin-bottom: 16px;">Unirse a red vecinal</h3>
+                <div class="form-group">
+                    <label>Nombre completo</label>
+                    <input type="text" placeholder="Ej: Ana Rojas" id="regNombre" value="">
+                </div>
+                <div class="form-group">
+                    <label>Correo electrónico</label>
+                    <input type="email" placeholder="vecino@cerro.cl" id="regEmail" value="">
+                </div>
+                <div class="form-group">
+                    <label>Teléfono (opcional)</label>
+                    <input type="tel" placeholder="+56 9 ..." id="regTelefono">
+                </div>
+                <div class="form-group">
+                    <label>Cerro / sector</label>
+                    <select id="regCerro">
+                        <option value="Cerro Alegre">Cerro Alegre</option>
+                        <option value="Cerro Concepción">Cerro Concepción</option>
+                        <option value="Cerro Cordillera">Cerro Cordillera</option>
+                        <option value="Cerro Mariposa">Cerro Mariposa</option>
+                        <option value="Cerro Barón">Cerro Barón</option>
+                        <option value="Otro">Otro cerro</option>
+                    </select>
+                </div>
+                <button class="btn" id="btnRegistrarMock">▶ Registrarme y continuar</button>
+                <p class="text-muted" style="margin-top: 16px; text-align:center;">Prototipo de baja fidelidad<br>Demo navegable para validar flujo.</p>
+            </div>
+        </div>
+
+        <!-- Pantalla REPORTE -->
+        <div id="screenReporte" class="screen">
+            <div class="emergency-btn btn btn-danger" id="btnEmergenciaIncendio" style="margin-top:0;">
+                <span class="warning-icon">🔥⚠️</span> ¡ESTO ES UN INCENDIO! (Emergencia)
+            </div>
+            <div class="card">
+                <h3>Reportar microbasural</h3>
+                <div class="form-group">
+                    <label>Ubicación automática (GPS simulado)</label>
+                    <div class="ubica-simulada" id="mockUbicacion">
+                        Cerro: <span id="cerroSeleccionadoUsuario">Cerro Alegre</span><br>
+                        Lat: -33.0455, Lon: -71.6193 (aproximado)
+                    </div>
+                    <button class="btn-outline btn-sm" style="margin-top: 8px;" id="simularRecargarUbicacion">🔄 Simular actualizar ubicación</button>
+                </div>
+                <div class="form-group">
+                    <label>Capturar / seleccionar evidencia</label>
+                    <div class="camara-simulada" id="mockCamara">
+                        [ Simulador de cámara ] <br>
+                        <span style="font-size:0.7rem;">(Mockup: toque para "tomar foto")</span>
+                        <div style="background:#dad7c0; margin-top: 8px; padding: 8px; border-radius: 12px;" id="previewFoto">📷 Ninguna imagen seleccionada</div>
+                        <button class="btn-outline btn-sm" id="simularTomarFoto" style="margin-top: 10px;">📸 Simular tomar foto</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Categoría de residuos (máximo 2)</label>
+                    <select id="categoriaResiduo">
+                        <option value="Domésticos/bolsas">Domésticos/bolsas</option>
+                        <option value="Escombros / muebles">Escombros / muebles</option>
+                        <option value="Materia orgánica">Materia orgánica</option>
+                        <option value="Reciclables mezclados">Reciclables mezclados</option>
+                        <option value="Varios / peligroso">Varios / peligroso</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Descripción adicional</label>
+                    <textarea rows="2" placeholder="Ej: acumulación en escalera, malos olores, cerca de viviendas..." id="descripcionReporte"></textarea>
+                </div>
+                <button class="btn" id="btnEnviarReporte">Enviar reporte ahora</button>
+            </div>
+        </div>
+
+        <!-- Pantalla CONFIRMACIÓN -->
+        <div id="screenConfirmacion" class="screen">
+            <div class="card" style="text-align:center;">
+                <div style="font-size: 48px;">✅</div>
+                <h3>¡Reporte recibido!</h3>
+                <p>Tu denuncia vecinal ha sido registrada. <br> N° seguimiento: <strong id="folioReporte">MIC-2405-01</strong></p>
+                <p class="text-muted">El municipio y la comunidad han sido notificados.<br>Puedes revisar el estado en "Historial".</p>
+                <button class="btn" id="irAHistorialDesdeConfirm">Ver mi historial</button>
+                <button class="btn-outline" id="nuevoReporteDesdeConfirm" style="margin-top: 12px;">+ Nuevo reporte</button>
+            </div>
+        </div>
+
+        <!-- Pantalla HISTORIAL -->
+        <div id="screenHistorial" class="screen">
+            <div class="flex-between" style="margin-bottom: 12px;">
+                <h3>Mis reportes</h3>
+                <button id="btnNuevoReporteHistorial" class="btn-outline btn-sm" style="width:auto;">+ Nuevo</button>
+            </div>
+            <div id="listaReportesContainer" class="card">
+                <div style="text-align:center; color:#6c757d; padding: 24px 0;" id="sinReportesMsg">No hay reportes aún. Realiza tu primer reporte.</div>
+                <div id="listaReportesDinamica"></div>
+            </div>
+            <div class="emergency-btn btn btn-danger" id="btnEmergenciaIncendioHistorial" style="margin-top: 8px;">
+                🔥 ¡ESTO ES UN INCENDIO! (Emergencia)
+            </div>
+            <p class="text-muted" style="margin-top: 12px;">*Los estados son: Recibido / En proceso / Resuelto (simulación)</p>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item" data-screen="registro">Registro</div>
+        <div class="nav-item" data-screen="reporte">Reportar</div>
+        <div class="nav-item" data-screen="historial">Historial</div>
+    </div>
+    <footer>Mockup • App cerro limpio - Solo interacción simulada</footer>
+</div>
+
+<script>
+    // --- Simulación de almacenamiento en memoria para reportes ---
+    let reportesUsuario = [];
+    let usuarioRegistrado = false;
+    let datosUsuario = { nombre: "", cerro: "Cerro Alegre" };
+
+    // elementos DOM
+    const screenRegistro = document.getElementById('screenRegistro');
+    const screenReporte = document.getElementById('screenReporte');
+    const screenConfirmacion = document.getElementById('screenConfirmacion');
+    const screenHistorial = document.getElementById('screenHistorial');
+    const allScreens = [screenRegistro, screenReporte, screenConfirmacion, screenHistorial];
+
+    function mostrarPantalla(id) {
+        allScreens.forEach(screen => screen.classList.remove('active-screen'));
+        const target = document.getElementById(id);
+        if (target) target.classList.add('active-screen');
+        const navs = document.querySelectorAll('.nav-item');
+        navs.forEach(nav => nav.classList.remove('active'));
+        if (id === 'screenRegistro') document.querySelector('.nav-item[data-screen="registro"]')?.classList.add('active');
+        if (id === 'screenReporte') document.querySelector('.nav-item[data-screen="reporte"]')?.classList.add('active');
+        if (id === 'screenHistorial') document.querySelector('.nav-item[data-screen="historial"]')?.classList.add('active');
+        if (id === 'screenHistorial') renderizarHistorial();
+        if (id === 'screenReporte' && usuarioRegistrado) {
+            document.getElementById('cerroSeleccionadoUsuario').innerText = datosUsuario.cerro;
+        }
+    }
+
+    function renderizarHistorial() {
+        const container = document.getElementById('listaReportesDinamica');
+        const msgVacio = document.getElementById('sinReportesMsg');
+        if (!container) return;
+        if (reportesUsuario.length === 0) {
+            if (msgVacio) msgVacio.style.display = 'block';
+            container.innerHTML = '';
+            return;
+        }
+        if (msgVacio) msgVacio.style.display = 'none';
+        let html = '';
+        reportesUsuario.forEach((rep, idx) => {
+            let estadoClass = '';
+            if (rep.estado === 'Recibido') estadoClass = 'estado-recibido';
+            else if (rep.estado === 'En proceso') estadoClass = 'estado-proceso';
+            else estadoClass = 'estado-resuelto';
+            html += `
+                <div class="reporte-item">
+                    <div>
+                        <strong>#${rep.id}</strong><br>
+                        <span class="badge">📅 ${rep.fecha}</span><br>
+                        <span>🗑️ ${rep.categoria}</span>
+                        <div class="text-muted">${rep.descripcion.substring(0, 45)}${rep.descripcion.length>45?'…':''}</div>
+                        <div>📍 ${rep.ubicacionCerro}</div>
+                        <div class="text-muted">📸 ${rep.fotoSimulada}</div>
+                    </div>
+                    <div>
+                        <span class="estado ${estadoClass}">${rep.estado}</span>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    function agregarReporte(categoria, descripcion, ubicacionCerro, fotoEstado) {
+        const newId = (reportesUsuario.length + 1).toString().padStart(3,'0');
+        const ahora = new Date();
+        const fechaStr = `${ahora.getDate()}/${ahora.getMonth()+1}/${ahora.getFullYear()} ${ahora.getHours()}:${ahora.getMinutes()}`;
+        const nuevoReporte = {
+            id: newId,
+            fecha: fechaStr,
+            categoria: categoria,
+            descripcion: descripcion || "Sin descripción adicional",
+            estado: "Recibido",
+            ubicacionCerro: ubicacionCerro,
+            fotoSimulada: fotoEstado
+        };
+        reportesUsuario.unshift(nuevoReporte);
+        renderizarHistorial();
+    }
+
+    function actualizarUbicacionMock() {
+        const spanUbicacion = document.getElementById('cerroSeleccionadoUsuario');
+        if (spanUbicacion) spanUbicacion.innerText = datosUsuario.cerro;
+    }
+
+    document.getElementById('btnRegistrarMock').addEventListener('click', () => {
+        const nombre = document.getElementById('regNombre').value.trim();
+        if (nombre === "") {
+            alert("Por favor ingresa tu nombre (simulación)");
+            return;
+        }
+        const cerroSelect = document.getElementById('regCerro').value;
+        datosUsuario.nombre = nombre;
+        datosUsuario.cerro = cerroSelect;
+        usuarioRegistrado = true;
+        actualizarUbicacionMock();
+        document.getElementById('descripcionReporte').value = '';
+        document.getElementById('categoriaResiduo').selectedIndex = 0;
+        document.getElementById('previewFoto').innerHTML = "📷 Ninguna imagen seleccionada";
+        mostrarPantalla('screenReporte');
+    });
+
+    let fotoTomada = false;
+    document.getElementById('simularTomarFoto')?.addEventListener('click', () => {
+        const preview = document.getElementById('previewFoto');
+        if (preview) {
+            preview.innerHTML = "📸 [Foto capturada] basural ejemplo.jpg ✅";
+            fotoTomada = true;
+        }
+    });
+
+    document.getElementById('simularRecargarUbicacion')?.addEventListener('click', () => {
+        const cerrosPosibles = ['Cerro Alegre', 'Cerro Concepción', 'Cerro Cordillera', 'Cerro Mariposa', 'Cerro Barón'];
+        const randomCerro = cerrosPosibles[Math.floor(Math.random() * cerrosPosibles.length)];
+        datosUsuario.cerro = randomCerro;
+        actualizarUbicacionMock();
+        alert(`Ubicación actualizada a: ${randomCerro} (simulación GPS)`);
+    });
+
+    document.getElementById('btnEnviarReporte')?.addEventListener('click', () => {
+        if (!usuarioRegistrado) {
+            alert("Primero completa el registro.");
+            mostrarPantalla('screenRegistro');
+            return;
+        }
+        const categoria = document.getElementById('categoriaResiduo').value;
+        const descripcion = document.getElementById('descripcionReporte').value.trim() || "Sin descripción detallada";
+        const ubicacionCerro = datosUsuario.cerro;
+        let fotoEstado = "Sin evidencia";
+        if (fotoTomada) fotoEstado = "Foto simulada adjunta";
+        else fotoEstado = "Sin imagen (mock)";
+        agregarReporte(categoria, descripcion, ubicacionCerro, fotoEstado);
+        const folioAleatorio = "VLR-" + Math.floor(Math.random()*900+100) + "-" + new Date().getTime().toString().slice(-4);
+        document.getElementById('folioReporte').innerText = folioAleatorio;
+        mostrarPantalla('screenConfirmacion');
+        fotoTomada = false;
+        document.getElementById('previewFoto').innerHTML = "📷 Ninguna imagen seleccionada";
+        document.getElementById('descripcionReporte').value = "";
+    });
+
+    document.getElementById('irAHistorialDesdeConfirm')?.addEventListener('click', () => {
+        mostrarPantalla('screenHistorial');
+        renderizarHistorial();
+    });
+    document.getElementById('nuevoReporteDesdeConfirm')?.addEventListener('click', () => {
+        mostrarPantalla('screenReporte');
+    });
+    document.getElementById('btnNuevoReporteHistorial')?.addEventListener('click', () => {
+        mostrarPantalla('screenReporte');
+    });
+
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            const screenDest = item.getAttribute('data-screen');
+            if (screenDest === 'registro') {
+                if (usuarioRegistrado) alert("Ya estás registrado, puedes reportar o ver historial.");
+                else mostrarPantalla('screenRegistro');
+            } else if (screenDest === 'reporte') {
+                if (!usuarioRegistrado) {
+                    alert("Primero debes completar el registro.");
+                    mostrarPantalla('screenRegistro');
+                } else {
+                    mostrarPantalla('screenReporte');
+                    actualizarUbicacionMock();
+                }
+            } else if (screenDest === 'historial') {
+                if (!usuarioRegistrado && reportesUsuario.length===0) {
+                    alert("Regístrate para ver reportes.");
+                    mostrarPantalla('screenRegistro');
+                } else {
+                    mostrarPantalla('screenHistorial');
+                    renderizarHistorial();
+                }
+            }
+        });
+    });
+
+    function emergenciaIncendio() {
+        alert("🚨 ¡ALERTA DE INCENDIO! 🚨\nEste prototipo simula envío inmediato a bomberos y municipalidad de Valparaíso.\n(Función en Desarrollo)");
+    }
+    const btnEmergencia = document.getElementById('btnEmergenciaIncendio');
+    const btnEmergenciaHist = document.getElementById('btnEmergenciaIncendioHistorial');
+    if (btnEmergencia) btnEmergencia.addEventListener('click', emergenciaIncendio);
+    if (btnEmergenciaHist) btnEmergenciaHist.addEventListener('click', emergenciaIncendio);
+
+    setTimeout(() => {
+        if (reportesUsuario.length > 0) {
+            if (reportesUsuario[0] && reportesUsuario[0].estado === "Recibido") {
+                reportesUsuario[0].estado = "En proceso";
+                renderizarHistorial();
+            }
+            if (reportesUsuario.length >= 2 && reportesUsuario[1].estado !== "Resuelto") {
+                setTimeout(() => {
+                    if(reportesUsuario[1]) reportesUsuario[1].estado = "Resuelto";
+                    renderizarHistorial();
+                }, 5000);
+            }
+        }
+    }, 3000);
+    window.renderizarHistorial = renderizarHistorial;
+</script>
+</body>
+</html>
