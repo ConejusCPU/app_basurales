@@ -10,10 +10,14 @@
 <div class="phone-mock">
     <div class="notch"></div>
     <div class="app-header">
-        <h1></h1>
+        <div>
+            <h1>Cerro Limpio</h1>
+            <p class="app-subtitle">Reporta microbasurales fácil y rápido desde tu cerro.</p>
+        </div>
         <span>Valparaíso</span>
     </div>
 
+    <div class="hero-tagline">Vecinos y vecinas unidos por un cerro más limpio</div>
     <div class="screen-container" id="screenContainer">
         <!-- Pantalla REGISTRO -->
         <div id="screenRegistro" class="screen active-screen">
@@ -48,10 +52,6 @@
         </div>
 
         <!-- Pantalla REPORTE -->
-        <div id="screenReporte" class="screen">
-            <div class="emergency-btn btn btn-danger" id="btnEmergenciaIncendio" style="margin-top:0;">
-                <span class="warning-icon">🔥⚠️</span> ¡ESTO ES UN INCENDIO! (Emergencia)
-            </div>
             <div class="card">
                 <h3>Reportar microbasural</h3>
                 <div class="form-group">
@@ -118,215 +118,14 @@
         </div>
     </div>
 
-    <div class="bottom-nav">
-        <div class="nav-item" data-screen="registro">Registro</div>
-        <div class="nav-item" data-screen="reporte">Reportar</div>
-        <div class="nav-item" data-screen="historial">Historial</div>
-    </div>
+    <nav class="bottom-nav" aria-label="Navegación principal">
+        <button class="nav-item active" type="button" data-screen="registro">🏠 Inicio</button>
+        <button class="nav-item" type="button" data-screen="reporte">📣 Reportar</button>
+        <button class="nav-item" type="button" data-screen="historial">📝 Historial</button>
+    </nav>
     <footer>Mockup • App cerro limpio - Solo interacción simulada</footer>
 </div>
 
-<script>
-    // --- Simulación de almacenamiento en memoria para reportes ---
-    let reportesUsuario = [];
-    let usuarioRegistrado = false;
-    let datosUsuario = { nombre: "", cerro: "Cerro Alegre" };
-
-    // elementos DOM
-    const screenRegistro = document.getElementById('screenRegistro');
-    const screenReporte = document.getElementById('screenReporte');
-    const screenConfirmacion = document.getElementById('screenConfirmacion');
-    const screenHistorial = document.getElementById('screenHistorial');
-    const allScreens = [screenRegistro, screenReporte, screenConfirmacion, screenHistorial];
-
-    function mostrarPantalla(id) {
-        allScreens.forEach(screen => screen.classList.remove('active-screen'));
-        const target = document.getElementById(id);
-        if (target) target.classList.add('active-screen');
-        const navs = document.querySelectorAll('.nav-item');
-        navs.forEach(nav => nav.classList.remove('active'));
-        if (id === 'screenRegistro') document.querySelector('.nav-item[data-screen="registro"]')?.classList.add('active');
-        if (id === 'screenReporte') document.querySelector('.nav-item[data-screen="reporte"]')?.classList.add('active');
-        if (id === 'screenHistorial') document.querySelector('.nav-item[data-screen="historial"]')?.classList.add('active');
-        if (id === 'screenHistorial') renderizarHistorial();
-        if (id === 'screenReporte' && usuarioRegistrado) {
-            document.getElementById('cerroSeleccionadoUsuario').innerText = datosUsuario.cerro;
-        }
-    }
-
-    function renderizarHistorial() {
-        const container = document.getElementById('listaReportesDinamica');
-        const msgVacio = document.getElementById('sinReportesMsg');
-        if (!container) return;
-        if (reportesUsuario.length === 0) {
-            if (msgVacio) msgVacio.style.display = 'block';
-            container.innerHTML = '';
-            return;
-        }
-        if (msgVacio) msgVacio.style.display = 'none';
-        let html = '';
-        reportesUsuario.forEach((rep, idx) => {
-            let estadoClass = '';
-            if (rep.estado === 'Recibido') estadoClass = 'estado-recibido';
-            else if (rep.estado === 'En proceso') estadoClass = 'estado-proceso';
-            else estadoClass = 'estado-resuelto';
-            html += `
-                <div class="reporte-item">
-                    <div>
-                        <strong>#${rep.id}</strong><br>
-                        <span class="badge">📅 ${rep.fecha}</span><br>
-                        <span>🗑️ ${rep.categoria}</span>
-                        <div class="text-muted">${rep.descripcion.substring(0, 45)}${rep.descripcion.length>45?'…':''}</div>
-                        <div>📍 ${rep.ubicacionCerro}</div>
-                        <div class="text-muted">📸 ${rep.fotoSimulada}</div>
-                    </div>
-                    <div>
-                        <span class="estado ${estadoClass}">${rep.estado}</span>
-                    </div>
-                </div>
-            `;
-        });
-        container.innerHTML = html;
-    }
-
-    function agregarReporte(categoria, descripcion, ubicacionCerro, fotoEstado) {
-        const newId = (reportesUsuario.length + 1).toString().padStart(3,'0');
-        const ahora = new Date();
-        const fechaStr = `${ahora.getDate()}/${ahora.getMonth()+1}/${ahora.getFullYear()} ${ahora.getHours()}:${ahora.getMinutes()}`;
-        const nuevoReporte = {
-            id: newId,
-            fecha: fechaStr,
-            categoria: categoria,
-            descripcion: descripcion || "Sin descripción adicional",
-            estado: "Recibido",
-            ubicacionCerro: ubicacionCerro,
-            fotoSimulada: fotoEstado
-        };
-        reportesUsuario.unshift(nuevoReporte);
-        renderizarHistorial();
-    }
-
-    function actualizarUbicacionMock() {
-        const spanUbicacion = document.getElementById('cerroSeleccionadoUsuario');
-        if (spanUbicacion) spanUbicacion.innerText = datosUsuario.cerro;
-    }
-
-    document.getElementById('btnRegistrarMock').addEventListener('click', () => {
-        const nombre = document.getElementById('regNombre').value.trim();
-        if (nombre === "") {
-            alert("Por favor ingresa tu nombre (simulación)");
-            return;
-        }
-        const cerroSelect = document.getElementById('regCerro').value;
-        datosUsuario.nombre = nombre;
-        datosUsuario.cerro = cerroSelect;
-        usuarioRegistrado = true;
-        actualizarUbicacionMock();
-        document.getElementById('descripcionReporte').value = '';
-        document.getElementById('categoriaResiduo').selectedIndex = 0;
-        document.getElementById('previewFoto').innerHTML = "📷 Ninguna imagen seleccionada";
-        mostrarPantalla('screenReporte');
-    });
-
-    let fotoTomada = false;
-    document.getElementById('simularTomarFoto')?.addEventListener('click', () => {
-        const preview = document.getElementById('previewFoto');
-        if (preview) {
-            preview.innerHTML = "📸 [Foto capturada] basural ejemplo.jpg ✅";
-            fotoTomada = true;
-        }
-    });
-
-    document.getElementById('simularRecargarUbicacion')?.addEventListener('click', () => {
-        const cerrosPosibles = ['Cerro Alegre', 'Cerro Concepción', 'Cerro Cordillera', 'Cerro Mariposa', 'Cerro Barón'];
-        const randomCerro = cerrosPosibles[Math.floor(Math.random() * cerrosPosibles.length)];
-        datosUsuario.cerro = randomCerro;
-        actualizarUbicacionMock();
-        alert(`Ubicación actualizada a: ${randomCerro} (simulación GPS)`);
-    });
-
-    document.getElementById('btnEnviarReporte')?.addEventListener('click', () => {
-        if (!usuarioRegistrado) {
-            alert("Primero completa el registro.");
-            mostrarPantalla('screenRegistro');
-            return;
-        }
-        const categoria = document.getElementById('categoriaResiduo').value;
-        const descripcion = document.getElementById('descripcionReporte').value.trim() || "Sin descripción detallada";
-        const ubicacionCerro = datosUsuario.cerro;
-        let fotoEstado = "Sin evidencia";
-        if (fotoTomada) fotoEstado = "Foto simulada adjunta";
-        else fotoEstado = "Sin imagen (mock)";
-        agregarReporte(categoria, descripcion, ubicacionCerro, fotoEstado);
-        const folioAleatorio = "VLR-" + Math.floor(Math.random()*900+100) + "-" + new Date().getTime().toString().slice(-4);
-        document.getElementById('folioReporte').innerText = folioAleatorio;
-        mostrarPantalla('screenConfirmacion');
-        fotoTomada = false;
-        document.getElementById('previewFoto').innerHTML = "📷 Ninguna imagen seleccionada";
-        document.getElementById('descripcionReporte').value = "";
-    });
-
-    document.getElementById('irAHistorialDesdeConfirm')?.addEventListener('click', () => {
-        mostrarPantalla('screenHistorial');
-        renderizarHistorial();
-    });
-    document.getElementById('nuevoReporteDesdeConfirm')?.addEventListener('click', () => {
-        mostrarPantalla('screenReporte');
-    });
-    document.getElementById('btnNuevoReporteHistorial')?.addEventListener('click', () => {
-        mostrarPantalla('screenReporte');
-    });
-
-    const navItems = document.querySelectorAll('.nav-item');
-    navItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            const screenDest = item.getAttribute('data-screen');
-            if (screenDest === 'registro') {
-                if (usuarioRegistrado) alert("Ya estás registrado, puedes reportar o ver historial.");
-                else mostrarPantalla('screenRegistro');
-            } else if (screenDest === 'reporte') {
-                if (!usuarioRegistrado) {
-                    alert("Primero debes completar el registro.");
-                    mostrarPantalla('screenRegistro');
-                } else {
-                    mostrarPantalla('screenReporte');
-                    actualizarUbicacionMock();
-                }
-            } else if (screenDest === 'historial') {
-                if (!usuarioRegistrado && reportesUsuario.length===0) {
-                    alert("Regístrate para ver reportes.");
-                    mostrarPantalla('screenRegistro');
-                } else {
-                    mostrarPantalla('screenHistorial');
-                    renderizarHistorial();
-                }
-            }
-        });
-    });
-
-    function emergenciaIncendio() {
-        alert("🚨 ¡ALERTA DE INCENDIO! 🚨\nEste prototipo simula envío inmediato a bomberos y municipalidad de Valparaíso.\n(Función en Desarrollo)");
-    }
-    const btnEmergencia = document.getElementById('btnEmergenciaIncendio');
-    const btnEmergenciaHist = document.getElementById('btnEmergenciaIncendioHistorial');
-    if (btnEmergencia) btnEmergencia.addEventListener('click', emergenciaIncendio);
-    if (btnEmergenciaHist) btnEmergenciaHist.addEventListener('click', emergenciaIncendio);
-
-    setTimeout(() => {
-        if (reportesUsuario.length > 0) {
-            if (reportesUsuario[0] && reportesUsuario[0].estado === "Recibido") {
-                reportesUsuario[0].estado = "En proceso";
-                renderizarHistorial();
-            }
-            if (reportesUsuario.length >= 2 && reportesUsuario[1].estado !== "Resuelto") {
-                setTimeout(() => {
-                    if(reportesUsuario[1]) reportesUsuario[1].estado = "Resuelto";
-                    renderizarHistorial();
-                }, 5000);
-            }
-        }
-    }, 3000);
-    window.renderizarHistorial = renderizarHistorial;
-</script>
+<script src="script.js"></script>
 </body>
 </html>
