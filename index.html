@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -10,14 +10,10 @@
 <div class="phone-mock">
     <div class="notch"></div>
     <div class="app-header">
-        <div>
-            <h1>Cerro Limpio</h1>
-            <p class="app-subtitle">Reporta microbasurales fácil y rápido desde tu cerro.</p>
-        </div>
+        <h1>ReportApp</h1>
         <span>Valparaíso</span>
     </div>
 
-    <div class="hero-tagline">Vecinos y vecinas unidos por un cerro más limpio</div>
     <div class="screen-container" id="screenContainer">
         <!-- Pantalla REGISTRO -->
         <div id="screenRegistro" class="screen active-screen">
@@ -52,6 +48,7 @@
         </div>
 
         <!-- Pantalla REPORTE -->
+        <div id="screenReporte" class="screen">
             <div class="card">
                 <h3>Reportar microbasural</h3>
                 <div class="form-group">
@@ -118,11 +115,11 @@
         </div>
     </div>
 
-    <nav class="bottom-nav" aria-label="Navegación principal">
-        <button class="nav-item active" type="button" data-screen="registro">🏠 Inicio</button>
-        <button class="nav-item" type="button" data-screen="reporte">📣 Reportar</button>
-        <button class="nav-item" type="button" data-screen="historial">📝 Historial</button>
-    </nav>
+    <div class="bottom-nav">
+        <div class="nav-item" data-screen="registro">Registro</div>
+        <div class="nav-item" data-screen="reporte">Reportar</div>
+        <div class="nav-item" data-screen="historial">Historial</div>
+    </div>
     <footer>Mockup • App cerro limpio - Solo interacción simulada</footer>
 </div>
 
